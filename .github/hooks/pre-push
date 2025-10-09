@@ -18,7 +18,7 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "✨ Checking formatting..."
-npx prettier --check .
+npx prettier --check . --ignore-path .prettierignore
 if [ $? -ne 0 ]; then
   echo "❌ Code formatting check failed. Run 'npx prettier --write .' to fix."
   exit 1

@@ -34,4 +34,4 @@ jobs:
         run: npm run lint
 
       - name: Check formatting
-        run: npx prettier --check .
+        run: npx prettier --check . --ignore-path .prettierignore

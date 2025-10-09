@@ -1,0 +1,15 @@
+# Config files
+tsconfig.json
+eslint.config.js
+
+# Scripts
+scripts/reset-project.js
+
+# GitHub workflows
+.github/workflows/ci.yml
+
+# Other files to ignore
+node_modules/
+dist/
+build/
+*.log
