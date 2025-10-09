@@ -1,7 +1,9 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getLocales } from "expo-localization";
-import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+
+import { getLocales } from "expo-localization";
+
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import i18n from "i18next";
 
 import en from "./en/translation.json";
 import pl from "./pl/translation.json";
@@ -20,7 +22,6 @@ const detectLanguage = async () => {
 (async () => {
   const lng = await detectLanguage();
 
-  // eslint-disable-next-line import/no-named-as-default-member
   i18n.use(initReactI18next).init({
     compatibilityJSON: "v4",
     lng,
