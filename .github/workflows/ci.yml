@@ -1,37 +1,35 @@
 name: CI
 
 on:
-  push:
-    branches:
-      - main
-      - develop
   pull_request:
     branches:
       - main
-      - develop
+    types: [opened, synchronize, reopened]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    
+    name: 🔍 Code Quality Check
 
     steps:
-      - name: Checkout repo
+      - name: 📥 Checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup Node
+      - name: 🟢 Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: 'npm'
 
-      - name: Install dependencies
+      - name: 📦 Install dependencies
         run: npm ci
 
-      - name: Type check
+      - name: 🔍 TypeScript check
         run: npx tsc --noEmit
 
-      - name: Lint code
+      - name: 🧹 ESLint check
         run: npm run lint
 
-      - name: Check formatting
+      - name: ✨ Prettier format check
         run: npx prettier --check . --ignore-path .prettierignore
