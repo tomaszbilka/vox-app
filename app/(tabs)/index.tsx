@@ -28,7 +28,7 @@ export default function HomeScreen() {
       </ThemedView>
 
       <ThemedView style={styles.controlsContainer}>
-        <ThemedText type="subtitle">Controls:</ThemedText>
+        <ThemedText type="subtitle">Controls</ThemedText>
         <ThemedText>
           Theme: {actualTheme} ({theme})
         </ThemedText>
