@@ -4,9 +4,10 @@ import { StatusBar } from "expo-status-bar";
 import {
   DarkTheme,
   DefaultTheme,
-  ThemeProvider,
+  ThemeProvider as NavigationThemeProvider,
 } from "@react-navigation/native";
 
+import { ThemeProvider } from "@/contexts/ThemeContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 import "@/locales/i18n";
@@ -20,15 +21,19 @@ export default function RootLayout() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen
-          name="modal"
-          options={{ presentation: "modal", title: "Modal" }}
-        />
-      </Stack>
-      <StatusBar style="auto" />
+    <ThemeProvider>
+      <NavigationThemeProvider
+        value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
+      >
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen
+            name="modal"
+            options={{ presentation: "modal", title: "Modal" }}
+          />
+        </Stack>
+        <StatusBar style="auto" />
+      </NavigationThemeProvider>
     </ThemeProvider>
   );
 }

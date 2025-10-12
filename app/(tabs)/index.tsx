@@ -9,11 +9,13 @@ import { HelloWave } from "@/components/hello-wave";
 import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/locales/useLanguage";
 
 export default function HomeScreen() {
   const { t } = useTranslation();
   const { toggleLanguage } = useLanguage();
+  const { theme, actualTheme, setTheme } = useTheme();
 
   return (
     <ParallaxScrollView
@@ -24,7 +26,19 @@ export default function HomeScreen() {
         <ThemedText type="title">{t("hello")}</ThemedText>
         <HelloWave />
       </ThemedView>
-      <Button title="Zmień język" onPress={toggleLanguage} />
+
+      <ThemedView style={styles.controlsContainer}>
+        <ThemedText type="subtitle">Controls</ThemedText>
+        <ThemedText>
+          Theme: {actualTheme} ({theme})
+        </ThemedText>
+        <Button title="Zmień język" onPress={toggleLanguage} />
+        <Button
+          title={actualTheme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
+          onPress={() => setTheme(actualTheme === "light" ? "dark" : "light")}
+        />
+        <Button title="🔄 System Theme" onPress={() => setTheme("system")} />
+      </ThemedView>
       <ThemedView style={styles.stepContainer}>
         <ThemedText type="subtitle">Step 1: Try it</ThemedText>
         <ThemedText>
@@ -95,6 +109,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
+  },
+  controlsContainer: {
+    gap: 8,
+    marginBottom: 16,
+    padding: 16,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
   },
   stepContainer: {
     gap: 8,
