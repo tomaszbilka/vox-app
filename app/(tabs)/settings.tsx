@@ -8,9 +8,9 @@ import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useLanguage } from "@/locales/useLanguage";
 
-export default function TabTwoScreen() {
+export default function SettingsScreen() {
   const { t } = useTranslation();
-  const { toggleLanguage } = useLanguage();
+  const { toggleLanguage, currentLanguage } = useLanguage();
   const { theme, actualTheme, setTheme } = useTheme();
 
   return (
@@ -26,16 +26,26 @@ export default function TabTwoScreen() {
       }
     >
       <ThemedView style={styles.controlsContainer}>
-        <ThemedText type="subtitle">Controls</ThemedText>
+        <ThemedText type="subtitle">{t("settings.title")}</ThemedText>
         <ThemedText>
-          Theme: {actualTheme} ({theme})
+          {t("settings.theme")}: {actualTheme} ({theme})
         </ThemedText>
-        <Button title="Zmień język" onPress={toggleLanguage} />
         <Button
-          title={actualTheme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
+          title={`🔄 ${t("settings.changeLanguage")} (${currentLanguage === "pl" ? "PL 👉 EN" : "EN 👉 PL"})`}
+          onPress={toggleLanguage}
+        />
+        <Button
+          title={
+            actualTheme === "light"
+              ? `🌙 ${t("settings.dark")}`
+              : `☀️ ${t("settings.light")}`
+          }
           onPress={() => setTheme(actualTheme === "light" ? "dark" : "light")}
         />
-        <Button title="🔄 System Theme" onPress={() => setTheme("system")} />
+        <Button
+          title={`🔄 ${t("settings.system")}`}
+          onPress={() => setTheme("system")}
+        />
       </ThemedView>
     </ParallaxScrollView>
   );
@@ -52,8 +62,6 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 16,
     padding: 16,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ccc",
+    alignItems: "flex-start",
   },
 });

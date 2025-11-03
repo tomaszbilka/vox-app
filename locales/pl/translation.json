@@ -1,4 +1,20 @@
 {
-  "hello": "Cześć!",
-  "welcome": "Witamy w naszej aplikacji"
+  "layout": {
+    "guide": "Przewodnik",
+    "listener": "Słuchacz",
+    "tabs": "Strona główna"
+  },
+  "home": {
+    "title": "Strona główna",
+    "guide": "Przewodnik",
+    "listener": "Słuchacz"
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "changeLanguage": "Zmień język",
+    "theme": "Motyw",
+    "system": "System",
+    "light": "Jasny",
+    "dark": "Ciemny"
+  }
 }

@@ -8,6 +8,10 @@ scripts/reset-project.js
 # GitHub workflows
 .github/workflows/ci.yml
 
+# Expo generated files
+.expo/
+expo-env.d.ts
+
 # Other files to ignore
 node_modules/
 dist/
