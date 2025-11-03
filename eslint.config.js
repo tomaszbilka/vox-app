@@ -32,7 +32,14 @@ export default tseslint.config(
       /* 🧹 General cleanliness rules */
       "no-console": "warn",
       "no-debugger": "warn",
-      "prettier/prettier": ["error", { endOfLine: "auto" }],
+      "prettier/prettier": [
+        "error",
+        {
+          tabWidth: 2,
+          useTabs: false,
+          endOfLine: "auto",
+        },
+      ],
 
       /* ⚛️ React & Hooks */
       "react-hooks/rules-of-hooks": "error",

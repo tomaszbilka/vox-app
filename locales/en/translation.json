@@ -1,4 +1,20 @@
 {
-  "hello": "Hello!",
-  "welcome": "Welcome to our app"
+  "layout": {
+    "guide": "Guide",
+    "listener": "Listener",
+    "tabs": "Home"
+  },
+  "home": {
+    "title": "Home",
+    "guide": "Guide",
+    "listener": "Listener"
+  },
+  "settings": {
+    "title": "Settings",
+    "changeLanguage": "Change Language",
+    "theme": "Theme",
+    "system": "System",
+    "light": "Light",
+    "dark": "Dark"
+  }
 }

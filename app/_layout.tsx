@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 
@@ -19,6 +21,7 @@ export const unstable_settings = {
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const { t } = useTranslation();
 
   return (
     <ThemeProvider>
@@ -26,11 +29,13 @@ export default function RootLayout() {
         value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
       >
         <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ title: t("layout.tabs") }} />
           <Stack.Screen
             name="modal"
             options={{ presentation: "modal", title: "Modal" }}
           />
+          <Stack.Screen name="guide" options={{ headerTitle: "" }} />
+          <Stack.Screen name="listener" options={{ headerTitle: "" }} />
         </Stack>
         <StatusBar style="auto" />
       </NavigationThemeProvider>
