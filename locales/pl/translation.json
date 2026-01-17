@@ -6,8 +6,52 @@
   },
   "home": {
     "title": "Strona główna",
+    "subtitle": "Wybierz swoją rolę, aby rozpocząć",
     "guide": "Przewodnik",
     "listener": "Słuchacz"
+  },
+  "guide": {
+    "title": "Przewodnik",
+    "roomCode": "Kod pokoju",
+    "shareCode": "Udostępnij ten kod słuchaczom",
+    "status": {
+      "title": "Status",
+      "connecting": "Łączenie...",
+      "connected": "Połączono",
+      "micRequired": "Wymagane uprawnienie mikrofonu",
+      "tokenError": "Błąd tokenu: {{error}}",
+      "roomError": "Błąd pokoju: {{error}}"
+    },
+    "listeners": "Słuchacze",
+    "speak": "Mów",
+    "stop": "Stop",
+    "retry": "Ponów",
+    "requestPermission": "Poproś o uprawnienie",
+    "error": {
+      "token": "Nie udało się pobrać tokenu: {{error}}",
+      "room": "Błąd połączenia z pokojem: {{error}}",
+      "micPermission": "Uprawnienie mikrofonu jest wymagane do mówienia"
+    }
+  },
+  "listener": {
+    "title": "Słuchacz",
+    "roomIdPlaceholder": "Wpisz ID pokoju",
+    "enter": "Wejdź",
+    "disconnect": "Rozłącz",
+    "listening": "Słuchanie przewodnika...",
+    "status": {
+      "title": "Status",
+      "notConnected": "Nie połączono",
+      "connecting": "Łączenie...",
+      "connected": "Połączono",
+      "tokenError": "Błąd tokenu: {{error}}",
+      "roomError": "Błąd pokoju: {{error}}"
+    },
+    "error": {
+      "invalidRoomId": "Proszę wpisać prawidłowe ID pokoju",
+      "token": "Nie udało się pobrać tokenu: {{error}}",
+      "room": "Błąd połączenia z pokojem: {{error}}"
+    }
   },
   "settings": {
     "title": "Ustawienia",

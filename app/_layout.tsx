@@ -15,6 +15,12 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import "@/locales/i18n";
 import "react-native-reanimated";
 
+// Register LiveKit globals for React Native
+if (typeof window === "undefined") {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  require("@livekit/react-native");
+}
+
 export const unstable_settings = {
   anchor: "(tabs)",
 };
