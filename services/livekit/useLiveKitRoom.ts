@@ -51,6 +51,14 @@ export function useLiveKitRoom({
     const connect = async () => {
       try {
         setError(null);
+
+        // Validate serverUrl
+        if (!serverUrl) {
+          throw new Error(
+            "LiveKit server URL is not configured. Please set EXPO_PUBLIC_LIVEKIT_URL in .env file.",
+          );
+        }
+
         const room = await connectToRoom(serverUrl, token, {
           audioCaptureDefaults: {
             echoCancellation: true,
@@ -66,7 +74,7 @@ export function useLiveKitRoom({
 
         roomRef.current = room;
 
-        // Set up event listeners
+        // Set up event listeners BEFORE checking connection state
         room.on("connected", () => {
           if (mounted) {
             setConnected(true);
@@ -123,18 +131,62 @@ export function useLiveKitRoom({
           }
         });
 
-        // Wait for connection
-        await new Promise<void>((resolve) => {
-          if (room.state === "connected") {
-            resolve();
-          } else {
-            room.once("connected", () => resolve());
+        // Check if already connected, otherwise wait for connection
+        if (room.state === "connected") {
+          if (mounted) {
+            setConnected(true);
+            const remoteCount = Array.from(
+              room.remoteParticipants.values(),
+            ).length;
+            setParticipantsCount(remoteCount);
           }
-        });
+        } else {
+          // Wait for connection with timeout
+          await new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              reject(
+                new Error(
+                  "Connection timeout: Failed to connect to LiveKit room within 10 seconds",
+                ),
+              );
+            }, 10000);
+
+            if (room.state === "connected") {
+              clearTimeout(timeout);
+              resolve();
+            } else {
+              room.once("connected", () => {
+                clearTimeout(timeout);
+                resolve();
+              });
+              room.once("disconnected", (reason) => {
+                clearTimeout(timeout);
+                reject(
+                  new Error(`Connection failed: ${reason || "Unknown error"}`),
+                );
+              });
+            }
+          });
+        }
       } catch (err) {
         if (mounted) {
-          const errorMessage =
-            err instanceof Error ? err.message : "Failed to connect to room";
+          let errorMessage = "Failed to connect to room";
+
+          if (err instanceof Error) {
+            errorMessage = err.message;
+
+            // Add more context for common errors
+            if (errorMessage.includes("WebRTC")) {
+              errorMessage +=
+                " (WebRTC may not be initialized. Try rebuilding the app.)";
+            } else if (errorMessage.includes("timeout")) {
+              errorMessage +=
+                " (Check your internet connection and LiveKit server URL)";
+            } else if (errorMessage.includes("network")) {
+              errorMessage += " (Network error - check your connection)";
+            }
+          }
+
           setError(errorMessage);
           setConnected(false);
         }
@@ -194,8 +246,8 @@ export function useLiveKitRoom({
       audioTrack.stop();
       audioTrackRef.current = null;
       setIsPublishing(false);
-    } catch (err) {
-      console.error("Error stopping audio publication:", err);
+    } catch {
+      // Error stopping audio publication - silently fail
       setIsPublishing(false);
     }
   }, []);

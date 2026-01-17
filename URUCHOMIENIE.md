@@ -46,9 +46,9 @@ Aplikacja zostanie zbudowana i zainstalowana na telefonie.
 #### Dla Android:
 
 1. **Włącz tryb deweloperski** na telefonie:
-   - Ustawienia → O telefonie → Naciśnij 7 razy "Numer kompilacji"
+   - Ustawienia → O telefonie → Naciśnij 7 razy "Numer kompilacji/wersji"
 2. **Włącz USB Debugging**:
-   - Ustawienia → Opcje deweloperskie → USB Debugging
+   - Ustawienia → Opcje deweloperskie/programisty → USB Debugging
 3. **Podłącz telefon przez USB**
 4. **Uruchom aplikację**:
 
@@ -252,6 +252,101 @@ Aplikacja na telefonie połączy się z serwerem deweloperskim.
 - Symulator iOS nie ma dostępu do mikrofonu
 - Użyj prawdziwego telefonu do testowania LiveKit
 
+### Problem: Sandbox error - "deny(1) file-write-create" w DerivedData
+
+**Błąd:**
+
+```
+error: Sandbox: bash(55370) deny(1) file-write-create /Users/.../DerivedData/.../ip.txt
+CommandError: Failed to build iOS project. "xcodebuild" exited with error code 65.
+```
+
+**Rozwiązanie:**
+
+1. **Wyczyść DerivedData:**
+
+```bash
+rm -rf ~/Library/Developer/Xcode/DerivedData
+```
+
+2. **Wyczyść build folder w projekcie:**
+
+```bash
+cd ios
+rm -rf build
+cd ..
+```
+
+3. **Zainstaluj ponownie CocoaPods:**
+
+```bash
+cd ios
+pod deintegrate
+pod install
+cd ..
+```
+
+4. **Spróbuj ponownie:**
+
+```bash
+npx expo run:ios --device
+```
+
+**Alternatywne rozwiązanie (jeśli powyższe nie działa):**
+
+1. **Otwórz projekt w Xcode:**
+
+```bash
+open ios/voxapp.xcworkspace
+```
+
+2. **W Xcode:**
+   - Product → Clean Build Folder (Shift + Cmd + K)
+   - File → Close Workspace
+   - Zamknij Xcode
+
+3. **Uruchom ponownie:**
+
+```bash
+npx expo run:ios --device
+```
+
+**Rozwiązanie zastosowane:**
+
+Wyłączyłem sandboxing skryptów dla konfiguracji Debug w projekcie. To pozwala skryptom build phase działać podczas development build.
+
+**Jeśli problem nadal występuje:**
+
+1. **Wyczyść i spróbuj ponownie:**
+
+```bash
+rm -rf ~/Library/Developer/Xcode/DerivedData
+cd ios
+rm -rf build
+pod install
+cd ..
+npx expo run:ios --device
+```
+
+2. **Alternatywnie - użyj prebuild --clean:**
+
+```bash
+npx expo prebuild --clean
+cd ios
+pod install
+cd ..
+npx expo run:ios --device
+```
+
+3. **Lub użyj EAS Build zamiast lokalnego builda:**
+
+```bash
+# To omija problem z sandboxem
+eas build --platform ios --profile development --local
+```
+
+**Uwaga:** Sandboxing jest wyłączony tylko dla Debug build (development). Release build nadal ma włączony sandboxing dla bezpieczeństwa.
+
 ---
 
 ## Szybki start (TL;DR)
@@ -288,7 +383,6 @@ npm start
 Po uruchomieniu aplikacji:
 
 1. **Przewodnik:**
-
    - Wybierz "Przewodnik"
    - Zobaczysz wygenerowany kod pokoju
    - Udziel uprawnień mikrofonu

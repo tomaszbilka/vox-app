@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Platform } from "react-native";
 
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -13,12 +14,22 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import { useColorScheme } from "@/hooks/use-color-scheme";
 
 import "@/locales/i18n";
+import "react-native-get-random-values";
 import "react-native-reanimated";
 
-// Register LiveKit globals for React Native
-if (typeof window === "undefined") {
-  // eslint-disable-next-line @typescript-eslint/no-require-imports
-  require("@livekit/react-native");
+// Register LiveKit globals for React Native (must be before any LiveKit imports)
+if (Platform.OS !== "web") {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const livekit = require("@livekit/react-native");
+    if (livekit.registerGlobals) {
+      livekit.registerGlobals();
+    } else if (typeof livekit === "function") {
+      livekit();
+    }
+  } catch {
+    // WebRTC initialization failed - will be handled by error messages
+  }
 }
 
 export const unstable_settings = {

@@ -32,8 +32,7 @@ export function useMicrophonePermission(): UseMicrophonePermissionReturn {
         setStatus("undetermined");
         setGranted(false);
       }
-    } catch (error) {
-      console.error("Error checking microphone permission:", error);
+    } catch {
       setStatus("denied");
       setGranted(false);
     }
@@ -60,8 +59,7 @@ export function useMicrophonePermission(): UseMicrophonePermissionReturn {
         setStatus("denied");
         setGranted(false);
       }
-    } catch (error) {
-      console.error("Error requesting microphone permission:", error);
+    } catch {
       setStatus("denied");
       setGranted(false);
     }

@@ -21,6 +21,13 @@ export async function fetchRoomToken(
     throw new Error("Room ID is required");
   }
 
+  // Validate backend URL
+  if (!BACKEND_URL) {
+    throw new Error(
+      "Backend URL is not configured. Please set EXPO_PUBLIC_BACKEND_URL in .env file.",
+    );
+  }
+
   const url = `${BACKEND_URL}/token?role=${role}&room=${encodeURIComponent(roomId)}`;
 
   try {
@@ -33,9 +40,8 @@ export async function fetchRoomToken(
 
     if (!response.ok) {
       const errorText = await response.text();
-      throw new Error(
-        `Failed to fetch token: ${response.status} ${response.statusText}. ${errorText}`,
-      );
+      const errorMessage = `Failed to fetch token: ${response.status} ${response.statusText}. ${errorText}`;
+      throw new Error(errorMessage);
     }
 
     const data: TokenResponse = await response.json();

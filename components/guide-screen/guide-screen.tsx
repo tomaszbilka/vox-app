@@ -75,6 +75,11 @@ export function GuideScreen({ roomId }: GuideScreenProps) {
     }
   };
 
+  const handleDisconnect = async () => {
+    await disconnect();
+    resetToken();
+  };
+
   const getStatusMessage = () => {
     if (!micGranted) {
       return t("guide.status.micRequired");
@@ -83,15 +88,21 @@ export function GuideScreen({ roomId }: GuideScreenProps) {
       return t("guide.status.connecting");
     }
     if (tokenError) {
-      return t("guide.status.tokenError", { error: tokenError });
+      return `${t("guide.status.tokenError", { error: tokenError })}`;
     }
     if (roomError) {
-      return t("guide.status.roomError", { error: roomError });
+      return `${t("guide.status.roomError", { error: roomError })}`;
     }
-    if (!connected) {
+    if (!connected && token) {
       return t("guide.status.connecting");
     }
-    return t("guide.status.connected");
+    if (!token && !tokenLoading) {
+      return "Waiting for token...";
+    }
+    if (connected) {
+      return t("guide.status.connected");
+    }
+    return t("guide.status.connecting");
   };
 
   return (
@@ -140,9 +151,11 @@ export function GuideScreen({ roomId }: GuideScreenProps) {
             <ThemedText type="subtitle" style={styles.sectionTitle}>
               {t("guide.listeners")}
             </ThemedText>
-            <ThemedText type="title" style={styles.listenerCount}>
-              {participantsCount}
-            </ThemedText>
+            <ThemedView style={styles.listenerCountContainer}>
+              <ThemedText style={styles.listenerCount}>
+                {participantsCount}
+              </ThemedText>
+            </ThemedView>
           </ThemedView>
         )}
 
@@ -165,6 +178,20 @@ export function GuideScreen({ roomId }: GuideScreenProps) {
             <ThemedText style={styles.errorText}>
               {t("guide.error.room", { error: roomError })}
             </ThemedText>
+            <ThemedText style={styles.errorDetailText}>
+              LiveKit URL: {LIVEKIT_SERVER_URL}
+            </ThemedText>
+            <ThemedButton
+              title={t("guide.retry")}
+              onPress={() => {
+                resetToken();
+                disconnect();
+                if (roomId && micGranted) {
+                  fetchToken("guide", roomId);
+                }
+              }}
+              style={styles.retryButton}
+            />
           </ThemedView>
         )}
 
@@ -193,6 +220,21 @@ export function GuideScreen({ roomId }: GuideScreenProps) {
             ]}
           />
         </ThemedView>
+
+        {/* Disconnect Button */}
+        {connected && (
+          <ThemedView style={styles.disconnectContainer}>
+            <ThemedButton
+              title={t("guide.disconnect")}
+              onPress={handleDisconnect}
+              style={styles.disconnectButton}
+              lightBackgroundColor="#dc3545"
+              darkBackgroundColor="#dc3545"
+              lightTextColor="#ffffff"
+              darkTextColor="#ffffff"
+            />
+          </ThemedView>
+        )}
       </ScrollView>
     </ThemedView>
   );
@@ -250,9 +292,18 @@ const styles = StyleSheet.create({
     textAlign: "center",
     opacity: 0.8,
   },
+  listenerCountContainer: {
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 8,
+  },
   listenerCount: {
-    fontSize: 48,
+    fontSize: 64,
     fontWeight: "bold",
+    textAlign: "center",
+    minHeight: 80,
+    lineHeight: 80,
   },
   buttonContainer: {
     width: "100%",
@@ -277,7 +328,24 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginBottom: 12,
   },
+  errorDetailText: {
+    color: "#ff0000",
+    textAlign: "center",
+    fontSize: 12,
+    opacity: 0.7,
+    marginBottom: 12,
+  },
   retryButton: {
     minWidth: 150,
+  },
+  disconnectContainer: {
+    width: "100%",
+    marginTop: 16,
+    alignItems: "center",
+  },
+  disconnectButton: {
+    minWidth: 120,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
   },
 });

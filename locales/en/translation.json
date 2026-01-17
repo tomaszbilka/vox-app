@@ -25,6 +25,7 @@
     "listeners": "Listeners",
     "speak": "Speak",
     "stop": "Stop",
+    "disconnect": "Disconnect",
     "retry": "Retry",
     "requestPermission": "Request Permission",
     "error": {

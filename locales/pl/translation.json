@@ -25,6 +25,7 @@
     "listeners": "Słuchacze",
     "speak": "Mów",
     "stop": "Stop",
+    "disconnect": "Rozłącz",
     "retry": "Ponów",
     "requestPermission": "Poproś o uprawnienie",
     "error": {
