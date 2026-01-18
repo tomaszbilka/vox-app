@@ -45,12 +45,51 @@ Aplikacja zostanie zbudowana i zainstalowana na telefonie.
 
 #### Dla Android:
 
-1. **Włącz tryb deweloperski** na telefonie:
+**Przed uruchomieniem - Konfiguracja Android SDK:**
+
+1. **Zainstaluj Android Studio** (jeśli jeszcze nie masz):
+   - Pobierz z: https://developer.android.com/studio
+   - Zainstaluj Android Studio
+   - Otwórz Android Studio → More Actions → SDK Manager
+   - Zainstaluj Android SDK (najnowsza wersja)
+   - Zainstaluj Android SDK Platform-Tools
+
+2. **Skonfiguruj zmienne środowiskowe**:
+
+   **Na macOS/Linux** - dodaj do `~/.zshrc` lub `~/.bash_profile`:
+
+   ```bash
+   export ANDROID_HOME=$HOME/Library/Android/sdk
+   export PATH=$PATH:$ANDROID_HOME/emulator
+   export PATH=$PATH:$ANDROID_HOME/platform-tools
+   export PATH=$PATH:$ANDROID_HOME/tools
+   export PATH=$PATH:$ANDROID_HOME/tools/bin
+   ```
+
+   **Następnie załaduj zmienne:**
+
+   ```bash
+   source ~/.zshrc  # lub source ~/.bash_profile
+   ```
+
+   **Sprawdź czy działa:**
+
+   ```bash
+   echo $ANDROID_HOME
+   adb version
+   ```
+
+3. **Włącz tryb deweloperski** na telefonie:
    - Ustawienia → O telefonie → Naciśnij 7 razy "Numer kompilacji/wersji"
-2. **Włącz USB Debugging**:
+4. **Włącz USB Debugging**:
    - Ustawienia → Opcje deweloperskie/programisty → USB Debugging
-3. **Podłącz telefon przez USB**
-4. **Uruchom aplikację**:
+5. **Podłącz telefon przez USB**
+6. **Sprawdź czy telefon jest widoczny:**
+   ```bash
+   adb devices
+   ```
+   Powinieneś zobaczyć swój telefon na liście.
+7. **Uruchom aplikację**:
 
 ```bash
 npx expo run:android

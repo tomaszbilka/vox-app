@@ -41,8 +41,9 @@ export function useLiveKitRoom({
   const audioTrackRef = useRef<LocalAudioTrack | null>(null);
 
   // Connect to room when token is available
+  // Don't connect if there's already an error - user must manually retry
   useEffect(() => {
-    if (!enabled || !token || roomRef.current) {
+    if (!enabled || !token || roomRef.current || error) {
       return;
     }
 
@@ -202,7 +203,7 @@ export function useLiveKitRoom({
         roomRef.current = null;
       }
     };
-  }, [serverUrl, token, enabled, role]);
+  }, [serverUrl, token, enabled, role, error]);
 
   const publishAudio = useCallback(async () => {
     if (!roomRef.current || role !== "guide") {

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 
@@ -16,6 +16,7 @@ interface GuideScreenProps {
 
 export function GuideScreen({ roomId }: GuideScreenProps) {
   const { t } = useTranslation();
+  const [shouldConnect, setShouldConnect] = useState(true); // Start with auto-connect
 
   const {
     granted: micGranted,
@@ -42,7 +43,7 @@ export function GuideScreen({ roomId }: GuideScreenProps) {
     serverUrl: LIVEKIT_SERVER_URL,
     token,
     role: "guide",
-    enabled: !!token && micGranted,
+    enabled: !!token && micGranted && shouldConnect,
   });
 
   // Request microphone permission on mount
@@ -52,12 +53,28 @@ export function GuideScreen({ roomId }: GuideScreenProps) {
     }
   }, [micStatus, requestMic]);
 
-  // Fetch token when roomId is available and mic is granted
+  // Fetch token when roomId is available, mic is granted, and user wants to connect
+  // Don't retry if there's already an error - user must manually retry
   useEffect(() => {
-    if (roomId && micGranted && !token && !tokenLoading) {
+    if (
+      roomId &&
+      micGranted &&
+      shouldConnect &&
+      !token &&
+      !tokenLoading &&
+      !tokenError // Don't retry automatically on error
+    ) {
       fetchToken("guide", roomId);
     }
-  }, [roomId, micGranted, token, tokenLoading, fetchToken]);
+  }, [
+    roomId,
+    micGranted,
+    shouldConnect,
+    token,
+    tokenLoading,
+    tokenError,
+    fetchToken,
+  ]);
 
   // Reset token if mic permission is revoked
   useEffect(() => {
@@ -76,8 +93,16 @@ export function GuideScreen({ roomId }: GuideScreenProps) {
   };
 
   const handleDisconnect = async () => {
+    setShouldConnect(false); // Stop auto-connecting
     await disconnect();
     resetToken();
+  };
+
+  const handleConnect = () => {
+    setShouldConnect(true); // Enable connection
+    if (roomId && micGranted && !token && !tokenLoading) {
+      fetchToken("guide", roomId);
+    }
   };
 
   const getStatusMessage = () => {
@@ -93,16 +118,21 @@ export function GuideScreen({ roomId }: GuideScreenProps) {
     if (roomError) {
       return `${t("guide.status.roomError", { error: roomError })}`;
     }
-    if (!connected && token) {
-      return t("guide.status.connecting");
-    }
-    if (!token && !tokenLoading) {
-      return "Waiting for token...";
-    }
     if (connected) {
       return t("guide.status.connected");
     }
-    return t("guide.status.connecting");
+    // If disconnected and not trying to connect, show "Not connected"
+    if (!shouldConnect && !token && !tokenLoading) {
+      return t("guide.status.notConnected");
+    }
+    if (!connected && token) {
+      return t("guide.status.connecting");
+    }
+    // Only show "Waiting for token" if we're trying to connect
+    if (!token && !tokenLoading && shouldConnect) {
+      return "Waiting for token...";
+    }
+    return t("guide.status.notConnected");
   };
 
   return (
@@ -136,7 +166,8 @@ export function GuideScreen({ roomId }: GuideScreenProps) {
             {t("guide.status.title")}
           </ThemedText>
           <ThemedView style={styles.statusContainer}>
-            {(tokenLoading || (!connected && !tokenError && !roomError)) && (
+            {(tokenLoading ||
+              (shouldConnect && !connected && !tokenError && !roomError)) && (
               <ActivityIndicator size="small" style={styles.loader} />
             )}
             <ThemedText type="default" style={styles.statusText}>
@@ -167,7 +198,13 @@ export function GuideScreen({ roomId }: GuideScreenProps) {
             </ThemedText>
             <ThemedButton
               title={t("guide.retry")}
-              onPress={() => fetchToken("guide", roomId)}
+              onPress={() => {
+                resetToken();
+                disconnect();
+                if (roomId && micGranted) {
+                  fetchToken("guide", roomId);
+                }
+              }}
               style={styles.retryButton}
             />
           </ThemedView>
@@ -208,18 +245,32 @@ export function GuideScreen({ roomId }: GuideScreenProps) {
           </ThemedView>
         )}
 
+        {/* Connect Button - shown when disconnected */}
+        {!connected && !tokenLoading && !tokenError && !roomError && (
+          <ThemedView style={styles.buttonContainer}>
+            <ThemedButton
+              title={t("guide.connect")}
+              onPress={handleConnect}
+              disabled={!micGranted}
+              style={styles.connectButton}
+            />
+          </ThemedView>
+        )}
+
         {/* Speak/Stop Button */}
-        <ThemedView style={styles.buttonContainer}>
-          <ThemedButton
-            title={isPublishing ? t("guide.stop") : t("guide.speak")}
-            onPress={handleToggleSpeak}
-            disabled={!connected || !micGranted || tokenLoading}
-            style={[
-              styles.speakButton,
-              ...(isPublishing ? [styles.speakButtonActive] : []),
-            ]}
-          />
-        </ThemedView>
+        {connected && (
+          <ThemedView style={styles.buttonContainer}>
+            <ThemedButton
+              title={isPublishing ? t("guide.stop") : t("guide.speak")}
+              onPress={handleToggleSpeak}
+              disabled={!connected || !micGranted || tokenLoading}
+              style={[
+                styles.speakButton,
+                ...(isPublishing ? [styles.speakButtonActive] : []),
+              ]}
+            />
+          </ThemedView>
+        )}
 
         {/* Disconnect Button */}
         {connected && (
@@ -308,6 +359,9 @@ const styles = StyleSheet.create({
   buttonContainer: {
     width: "100%",
     marginTop: 24,
+  },
+  connectButton: {
+    minWidth: 200,
   },
   speakButton: {
     minWidth: 200,

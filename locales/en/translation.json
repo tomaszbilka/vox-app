@@ -18,6 +18,7 @@
       "title": "Status",
       "connecting": "Connecting...",
       "connected": "Connected",
+      "notConnected": "Not connected",
       "micRequired": "Microphone permission required",
       "tokenError": "Token error: {{error}}",
       "roomError": "Room error: {{error}}"
@@ -26,6 +27,7 @@
     "speak": "Speak",
     "stop": "Stop",
     "disconnect": "Disconnect",
+    "connect": "Connect",
     "retry": "Retry",
     "requestPermission": "Request Permission",
     "error": {
