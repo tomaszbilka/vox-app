@@ -78,15 +78,35 @@ export async function connectToRoom(
 }
 
 /**
- * Disconnects from a LiveKit room
+ * Disconnects from a LiveKit room gracefully
  * @param room - The room instance to disconnect from
  */
 export async function disconnectFromRoom(room: Room | null): Promise<void> {
   if (room) {
     try {
-      await room.disconnect();
-    } catch (error) {
-      console.error("Error disconnecting from room:", error);
+      // Stop all tracks before disconnecting to avoid warnings
+      const localParticipant = room.localParticipant;
+      if (localParticipant) {
+        // Stop all audio tracks
+        localParticipant.audioTrackPublications.forEach((publication) => {
+          if (publication.track) {
+            publication.track.stop();
+          }
+        });
+        // Unpublish all tracks
+        localParticipant.trackPublications.forEach((publication) => {
+          if (publication.track) {
+            localParticipant.unpublishTrack(publication.track);
+          }
+        });
+      }
+
+      // Disconnect with stopTracks option to cleanly close connection
+      await room.disconnect(true);
+    } catch {
+      // Ignore disconnect errors - they're expected when disconnecting
+      // The warning about websocket closed (code 1001) is normal behavior
+      // when the stream ends during disconnection
     }
   }
 }

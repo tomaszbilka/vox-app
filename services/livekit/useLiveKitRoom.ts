@@ -232,17 +232,21 @@ export function useLiveKitRoom({
   }, [role]);
 
   const stopPublishing = useCallback(async () => {
-    if (!roomRef.current || !audioTrackRef.current) {
+    if (!roomRef.current) {
       return;
     }
 
     try {
       const room = roomRef.current;
-      const audioTrack = audioTrackRef.current;
 
-      await room.localParticipant.unpublishTrack(audioTrack);
-      audioTrack.stop();
-      audioTrackRef.current = null;
+      // Disable microphone instead of unpublishing track
+      // This is cleaner and avoids warnings
+      await room.localParticipant.setMicrophoneEnabled(false);
+
+      if (audioTrackRef.current) {
+        audioTrackRef.current.stop();
+        audioTrackRef.current = null;
+      }
       setIsPublishing(false);
     } catch {
       // Error stopping audio publication - silently fail
