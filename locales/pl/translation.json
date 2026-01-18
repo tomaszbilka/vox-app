@@ -38,7 +38,7 @@
   },
   "listener": {
     "title": "Słuchacz",
-    "roomIdPlaceholder": "Wpisz ID pokoju",
+    "roomIdPlaceholder": "Wpisz kod pokoju (np. A3B9K2)",
     "enter": "Wejdź",
     "disconnect": "Rozłącz",
     "listening": "Słuchanie przewodnika...",
@@ -51,7 +51,7 @@
       "roomError": "Błąd pokoju: {{error}}"
     },
     "error": {
-      "invalidRoomId": "Proszę wpisać prawidłowe ID pokoju",
+      "invalidRoomId": "Kod pokoju musi mieć 4-8 znaków (np. A3B9K2)",
       "token": "Nie udało się pobrać tokenu: {{error}}",
       "room": "Błąd połączenia z pokojem: {{error}}"
     }

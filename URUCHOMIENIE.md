@@ -283,6 +283,66 @@ Aplikacja na telefonie połączy się z serwerem deweloperskim.
 3. Pobierz iOS Simulator (jeśli brakuje)
 4. Lub uruchom ręcznie: Xcode → Open Developer Tool → Simulator
 
+### Problem: Android - "Network request failed" lub "Błąd tokenu: Network request failed"
+
+**Błąd:**
+
+```
+Błąd tokenu: Network request failed
+```
+
+**Możliwe przyczyny:**
+
+1. **Backend działa lokalnie na localhost, a aplikacja na prawdziwym urządzeniu:**
+   - Telefon nie może połączyć się z `localhost` komputera
+   - Musisz użyć IP adresu MacBooka w sieci lokalnej
+
+2. **Rozwiązanie:**
+
+   **Krok 1: Znajdź IP adres MacBooka:**
+
+   ```bash
+   # Na macOS:
+   ipconfig getifaddr en0
+   # Lub:
+   ifconfig | grep "inet " | grep -v 127.0.0.1
+   ```
+
+   Przykład: `192.168.1.100`
+
+   **Krok 2: Upewnij się, że backend nasłuchuje na wszystkich interfejsach:**
+
+   ```go
+   // W main.go backendu:
+   http.ListenAndServe("0.0.0.0:8888", nil)  // ✅ Nie "localhost:8888"
+   ```
+
+   **Krok 3: Zaktualizuj `.env` z IP MacBooka:**
+
+   ```env
+   EXPO_PUBLIC_BACKEND_URL=http://192.168.1.100:8888
+   # Zamień na IP Twojego MacBooka
+   ```
+
+   **Krok 4: Upewnij się, że telefon i MacBook są w tej samej sieci WiFi**
+
+   **Krok 5: Sprawdź czy backend jest dostępny:**
+   - Na telefonie otwórz przeglądarkę
+   - Wejdź na: `http://IP_MACBOOKA:8888/token?role=guide&room=test`
+   - Powinieneś zobaczyć odpowiedź JSON
+
+   **Krok 6: Przebuduj aplikację:**
+
+   ```bash
+   npx expo prebuild --clean
+   npx expo run:android
+   ```
+
+3. **Jeśli nadal nie działa:**
+   - Sprawdź firewall na MacBooku - może blokować połączenia
+   - Upewnij się, że backend używa HTTP (nie HTTPS) dla lokalnego developmentu
+   - Sprawdź czy port 8888 nie jest zablokowany
+
 ### Problem: WebRTC nie działa w symulatorze
 
 **Rozwiązanie:**

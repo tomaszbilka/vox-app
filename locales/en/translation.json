@@ -38,7 +38,7 @@
   },
   "listener": {
     "title": "Listener",
-    "roomIdPlaceholder": "Enter room ID",
+    "roomIdPlaceholder": "Enter room code (e.g. A3B9K2)",
     "enter": "Enter",
     "disconnect": "Disconnect",
     "listening": "Listening to guide...",
@@ -51,7 +51,7 @@
       "roomError": "Room error: {{error}}"
     },
     "error": {
-      "invalidRoomId": "Please enter a valid room ID",
+      "invalidRoomId": "Room code must be 4-8 characters (e.g. A3B9K2)",
       "token": "Failed to get token: {{error}}",
       "room": "Room connection error: {{error}}"
     }

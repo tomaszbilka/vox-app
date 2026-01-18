@@ -47,16 +47,18 @@ export function ListenerScreen() {
   }, [shouldConnect, resetToken, disconnect]);
 
   const handleEnter = async () => {
-    const trimmedRoomId = roomId.trim();
+    const trimmedRoomId = roomId.trim().toUpperCase();
     if (!trimmedRoomId) {
       return;
     }
 
-    // Basic UUID validation (36 characters with dashes)
-    if (trimmedRoomId.length < 30) {
+    // Simple room code validation (4-8 characters, alphanumeric)
+    if (trimmedRoomId.length < 4 || trimmedRoomId.length > 8) {
       return;
     }
 
+    // Update roomId to uppercase version
+    setRoomId(trimmedRoomId);
     setShouldConnect(true);
     await fetchToken("listener", trimmedRoomId);
   };
@@ -87,7 +89,7 @@ export function ListenerScreen() {
     return t("listener.status.connecting");
   };
 
-  const isValidRoomId = roomId.trim().length >= 30;
+  const isValidRoomId = roomId.trim().length >= 4 && roomId.trim().length <= 8;
   const canEnter = isValidRoomId && !tokenLoading && !connected;
 
   return (
@@ -103,17 +105,19 @@ export function ListenerScreen() {
         {/* Room ID Input */}
         {!connected && (
           <ThemedView style={styles.section}>
-            <ThemedText type="subtitle" style={styles.sectionTitle}>
-              {t("listener.roomIdPlaceholder")}
-            </ThemedText>
             <TextInput
               style={styles.input}
               value={roomId}
-              onChangeText={setRoomId}
+              onChangeText={(text) => {
+                // Convert to uppercase and filter to alphanumeric only
+                const filtered = text.toUpperCase().replace(/[^A-Z0-9]/g, "");
+                setRoomId(filtered);
+              }}
               placeholder={t("listener.roomIdPlaceholder")}
               placeholderTextColor="#999"
-              autoCapitalize="none"
+              autoCapitalize="characters"
               autoCorrect={false}
+              maxLength={8}
               editable={!tokenLoading && !connected}
             />
             {!isValidRoomId && roomId.length > 0 && (

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import type { LocalAudioTrack, RemoteParticipant, Room } from "livekit-client";
-import { Track } from "livekit-client";
 
 import type { Role } from "@/services/api/tokenService";
 
@@ -107,17 +106,15 @@ export function useLiveKitRoom({
           }
         });
 
-        room.on("trackSubscribed", (track, _participant) => {
-          // Automatically subscribe to audio tracks for listeners
-          if (track.kind === Track.Kind.Audio && role === "listener") {
-            track.attach();
-          }
+        room.on("trackSubscribed", (_track, _participant) => {
+          // In React Native, audio tracks are automatically played after subscription
+          // No need to call attach() - that's only for web (DOM)
+          // The track is already subscribed and will play automatically
         });
 
-        room.on("trackUnsubscribed", (track) => {
-          if (track.kind === Track.Kind.Audio) {
-            track.detach();
-          }
+        room.on("trackUnsubscribed", (_track) => {
+          // In React Native, tracks are automatically cleaned up on unsubscribe
+          // No need to call detach() - that's only for web (DOM)
         });
 
         room.on("localTrackPublished", () => {

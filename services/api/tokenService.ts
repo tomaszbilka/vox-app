@@ -9,16 +9,16 @@ export interface TokenResponse {
 /**
  * Fetches a LiveKit token from the backend
  * @param role - The role of the user (guide or listener)
- * @param roomId - The room ID to join
+ * @param roomCode - The user-friendly room code (e.g., "A3B9K2")
  * @returns Promise resolving to the token response
  * @throws Error if the request fails
  */
 export async function fetchRoomToken(
   role: Role,
-  roomId: string,
+  roomCode: string,
 ): Promise<TokenResponse> {
-  if (!roomId || roomId.trim() === "") {
-    throw new Error("Room ID is required");
+  if (!roomCode || roomCode.trim() === "") {
+    throw new Error("Room code is required");
   }
 
   // Validate backend URL
@@ -28,7 +28,9 @@ export async function fetchRoomToken(
     );
   }
 
-  const url = `${BACKEND_URL}/token?role=${role}&room=${encodeURIComponent(roomId)}`;
+  // Use room code directly (backend accepts any string)
+  const normalizedCode = roomCode.trim().toUpperCase();
+  const url = `${BACKEND_URL}/token?role=${role}&room=${encodeURIComponent(normalizedCode)}`;
 
   try {
     const response = await fetch(url, {
