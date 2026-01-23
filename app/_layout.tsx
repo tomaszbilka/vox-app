@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { Platform } from "react-native";
+import { LogBox, Platform } from "react-native";
 
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -16,6 +16,18 @@ import { useColorScheme } from "@/hooks/use-color-scheme";
 import "@/locales/i18n";
 import "react-native-get-random-values";
 import "react-native-reanimated";
+
+// Ignore known warnings that are not critical
+if (__DEV__) {
+  LogBox.ignoreLogs([
+    // Ignore DevTools warnings (not critical)
+    "Ignoring DevTools app debug target",
+    // Ignore LiveKit websocket closed warnings (code 1001 is normal on disconnect)
+    "websocket closed",
+    // Ignore ping timeout warnings (network latency is expected)
+    "ping timeout triggered",
+  ]);
+}
 
 // Register LiveKit globals for React Native (must be before any LiveKit imports)
 if (Platform.OS !== "web") {

@@ -86,11 +86,21 @@ export function useLiveKitRoom({
           }
         });
 
-        room.on("disconnected", () => {
+        room.on("disconnected", (reason) => {
           if (mounted) {
             setConnected(false);
             setParticipantsCount(0);
             setIsPublishing(false);
+            // Ignore warnings for normal disconnects (code 1001 is "going away")
+            // This is expected behavior when disconnecting gracefully
+            // The reason is a DisconnectReason enum, we check the string representation
+            if (reason) {
+              const reasonStr = String(reason);
+              if (reasonStr.includes("1001")) {
+                // Normal disconnect, no need to log
+                return;
+              }
+            }
           }
         });
 

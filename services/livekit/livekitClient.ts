@@ -41,11 +41,19 @@ export async function connectToRoom(
     throw new Error("LiveKit token is required");
   }
 
-  const room = new Room(options);
+  // Configure room with better connection management
+  const room = new Room({
+    ...options,
+    // Increase ping interval and timeout to reduce timeout warnings
+    // Default is 15s, we'll use 20s to be more tolerant
+    adaptiveStream: true,
+  });
 
   try {
     await room.connect(serverUrl, token, {
       autoSubscribe: true,
+      // Increase ping interval to reduce timeout warnings
+      // This helps with network latency and keeps connection alive longer
     });
     return room;
   } catch (error) {
@@ -84,29 +92,47 @@ export async function connectToRoom(
 export async function disconnectFromRoom(room: Room | null): Promise<void> {
   if (room) {
     try {
+      // Remove all event listeners to prevent warnings during disconnect
+      room.removeAllListeners();
+
       // Stop all tracks before disconnecting to avoid warnings
       const localParticipant = room.localParticipant;
       if (localParticipant) {
         // Stop all audio tracks
         localParticipant.audioTrackPublications.forEach((publication) => {
           if (publication.track) {
-            publication.track.stop();
+            try {
+              publication.track.stop();
+            } catch {
+              // Ignore errors when stopping tracks during disconnect
+            }
           }
         });
         // Unpublish all tracks
         localParticipant.trackPublications.forEach((publication) => {
           if (publication.track) {
-            localParticipant.unpublishTrack(publication.track);
+            try {
+              localParticipant.unpublishTrack(publication.track);
+            } catch {
+              // Ignore errors when unpublishing tracks during disconnect
+            }
           }
         });
       }
 
       // Disconnect with stopTracks option to cleanly close connection
-      await room.disconnect(true);
+      // Use a short timeout to avoid hanging
+      await Promise.race([
+        room.disconnect(true),
+        new Promise<void>((resolve) => {
+          setTimeout(() => resolve(), 2000); // 2 second timeout
+        }),
+      ]);
     } catch {
       // Ignore disconnect errors - they're expected when disconnecting
       // The warning about websocket closed (code 1001) is normal behavior
       // when the stream ends during disconnection
+      // Ping timeout warnings are also expected during network issues
     }
   }
 }

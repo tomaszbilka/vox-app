@@ -1,4 +1,4 @@
-import { BACKEND_URL } from "@/config/livekit";
+import { BACKEND_URL, MOBILE_API_KEY } from "@/config/livekit";
 
 export type Role = "guide" | "listener";
 
@@ -28,6 +28,13 @@ export async function fetchRoomToken(
     );
   }
 
+  // Validate API key
+  if (!MOBILE_API_KEY) {
+    throw new Error(
+      "Mobile API Key is not configured. Please set EXPO_PUBLIC_MOBILE_API_KEY in .env file.",
+    );
+  }
+
   // Use room code directly (backend accepts any string)
   const normalizedCode = roomCode.trim().toUpperCase();
   const url = `${BACKEND_URL}/token?role=${role}&room=${encodeURIComponent(normalizedCode)}`;
@@ -37,6 +44,7 @@ export async function fetchRoomToken(
       method: "GET",
       headers: {
         "Content-Type": "application/json",
+        "X-API-Key": MOBILE_API_KEY,
       },
     });
 
