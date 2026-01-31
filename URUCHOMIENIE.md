@@ -495,6 +495,49 @@ Po uruchomieniu aplikacji:
 
 ---
 
+## Konfiguracja produkcji (URL serwera produkcyjnego)
+
+Aby w **produkcji** aplikacja używała Twojego serwera LiveKit i backendu (zamiast lokalnych / dev), ustaw zmienne środowiskowe **podczas budowania** aplikacji.
+
+### Opcja A: EAS Build (zalecane dla produkcji)
+
+1. **Zainstaluj EAS CLI** (jeśli jeszcze nie):
+   ```bash
+   npm install -g eas-cli
+   eas login
+   ```
+
+2. **Ustaw sekrety w EAS** – wartości będą wstrzyknięte przy każdym buildzie produkcyjnym:
+   ```bash
+   eas secret:create --name EXPO_PUBLIC_LIVEKIT_URL --value "wss://twoj-produkcyjny.livekit.cloud" --scope project
+   eas secret:create --name EXPO_PUBLIC_BACKEND_URL --value "https://twoj-backend.example.com" --scope project
+   eas secret:create --name EXPO_PUBLIC_MOBILE_API_KEY --value "twoj-api-key" --scope project
+   ```
+
+3. **Buduj wersję produkcyjną**:
+   ```bash
+   eas build --profile production --platform ios
+   eas build --profile production --platform android
+   ```
+
+   W pliku `eas.json` (w katalogu projektu) profile `production` może używać tych samych zmiennych – EAS automatycznie udostępnia sekrety jako zmienne środowiskowe podczas budowania. Przykład konfiguracji jest w `eas.json`.
+
+### Opcja B: Lokalny build z plikiem .env
+
+Przed budowaniem wersji release ustaw w `.env` **produkcyjne** URL-e:
+
+```env
+EXPO_PUBLIC_LIVEKIT_URL=wss://twoj-produkcyjny.livekit.cloud
+EXPO_PUBLIC_BACKEND_URL=https://twoj-backend.example.com
+EXPO_PUBLIC_MOBILE_API_KEY=twoj-api-key
+```
+
+Następnie zbuduj aplikację (np. `npx expo run:ios --configuration Release`). Wartości z `.env` trafią do `app.config.js` i do `Constants.expoConfig?.extra`, więc w gotowej aplikacji będą używane produkcyjne URL-e.
+
+**Uwaga:** Nie commituj `.env` z prawdziwymi kluczami. Dla EAS używaj EAS Secrets zamiast pliku `.env` na serwerze.
+
+---
+
 ## Uwagi
 
 - **WebRTC działa najlepiej na fizycznych urządzeniach** - symulatory/emulatory mogą mieć problemy
