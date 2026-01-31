@@ -6,8 +6,55 @@
   },
   "home": {
     "title": "Home",
+    "subtitle": "Choose your role to start",
     "guide": "Guide",
     "listener": "Listener"
+  },
+  "guide": {
+    "title": "Guide",
+    "roomCode": "Room Code",
+    "shareCode": "Share this code with listeners",
+    "status": {
+      "title": "Status",
+      "connecting": "Connecting...",
+      "connected": "Connected",
+      "notConnected": "Not connected",
+      "micRequired": "Microphone permission required",
+      "tokenError": "Token error: {{error}}",
+      "roomError": "Room error: {{error}}"
+    },
+    "listeners": "Listeners",
+    "speak": "Speak",
+    "stop": "Stop",
+    "disconnect": "Disconnect",
+    "connect": "Connect",
+    "retry": "Retry",
+    "requestPermission": "Request Permission",
+    "error": {
+      "token": "Failed to get token: {{error}}",
+      "room": "Room connection error: {{error}}",
+      "micPermission": "Microphone permission is required to speak"
+    }
+  },
+  "listener": {
+    "title": "Listener",
+    "roomIdPlaceholder": "Enter room code (e.g. A3B9K2)",
+    "enter": "Enter",
+    "disconnect": "Disconnect",
+    "listening": "Listening to guide...",
+    "status": {
+      "title": "Status",
+      "notConnected": "Not connected",
+      "connecting": "Connecting...",
+      "connected": "Connected",
+      "tokenError": "Token error: {{error}}",
+      "roomError": "Room error: {{error}}"
+    },
+    "error": {
+      "invalidRoomId": "Room code must be 4-8 characters (e.g. A3B9K2)",
+      "token": "Failed to get token: {{error}}",
+      "room": "Room connection error: {{error}}"
+    }
   },
   "settings": {
     "title": "Settings",

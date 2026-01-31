@@ -12,7 +12,7 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    ignores: ["dist", "build", "node_modules", "eslint.config.js"],
+    ignores: ["dist", "build", "node_modules", "eslint.config.js", "app.config.js"],
   },
   {
     plugins: {
