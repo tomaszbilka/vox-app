@@ -502,12 +502,14 @@ Aby w **produkcji** aplikacja używała Twojego serwera LiveKit i backendu (zami
 ### Opcja A: EAS Build (zalecane dla produkcji)
 
 1. **Zainstaluj EAS CLI** (jeśli jeszcze nie):
+
    ```bash
    npm install -g eas-cli
    eas login
    ```
 
 2. **Ustaw sekrety w EAS** – wartości będą wstrzyknięte przy każdym buildzie produkcyjnym:
+
    ```bash
    eas secret:create --name EXPO_PUBLIC_LIVEKIT_URL --value "wss://twoj-produkcyjny.livekit.cloud" --scope project
    eas secret:create --name EXPO_PUBLIC_BACKEND_URL --value "https://twoj-backend.example.com" --scope project
@@ -515,6 +517,7 @@ Aby w **produkcji** aplikacja używała Twojego serwera LiveKit i backendu (zami
    ```
 
 3. **Buduj wersję produkcyjną**:
+
    ```bash
    eas build --profile production --platform ios
    eas build --profile production --platform android

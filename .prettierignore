@@ -12,8 +12,13 @@ scripts/reset-project.js
 .expo/
 expo-env.d.ts
 
-# Other files to ignore
+# Native / build (nie formatujemy kodem Prettierem)
+android/
+ios/
+
+# Build & cache
 node_modules/
 dist/
 build/
 *.log
+package-lock.json
