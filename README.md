@@ -1,50 +1,218 @@
-# Welcome to your Expo app 👋
+# Vox App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Mobile application for real-time audio streaming using LiveKit. Enables guides to stream audio to listeners in dedicated rooms.
 
-## Get started
+## Technologies
 
-1. Install dependencies
+- **Framework**: Expo (React Native)
+- **Routing**: Expo Router (file-based routing)
+- **Audio Streaming**: LiveKit WebRTC
+- **Language**: TypeScript
+- **Build**: EAS Build
 
-   ```bash
-   npm install
-   ```
+## Project Structure
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+vox-app/
+├── app/                    # Screens (Expo Router)
+│   ├── (tabs)/            # Tab navigation
+│   ├── guide.tsx          # Guide screen
+│   └── listener.tsx       # Listener screen
+├── components/            # React components
+│   ├── guide-screen/     # Guide screen component
+│   └── listener-screen/  # Listener screen component
+├── services/             # Business logic
+│   ├── api/             # API services
+│   └── livekit/         # LiveKit integration
+├── hooks/               # Custom React hooks
+├── config/              # Configuration files
+└── utils/               # Utility functions
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Required APIs
 
-## Learn more
+The application requires two external services:
 
-To learn more about developing your project with Expo, look at the following resources:
+1. **LiveKit Server** - WebRTC server for audio streaming
+   - WebSocket URL (e.g., `wss://your-project.livekit.cloud`)
+   - API Key and Secret (used by backend)
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+2. **Backend Token Service** - endpoint for generating JWT tokens
+   - Endpoint: `GET /token?role=guide|listener&room=<room-id>`
+   - Returns: `{ "token": "<jwt-token>" }`
+   - Must be deployed (e.g., Netlify Functions, Render, etc.)
 
-## Join the community
+## Environment Configuration
 
-Join our community of developers creating universal apps.
+Create a `.env` file in the root directory:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```env
+EXPO_PUBLIC_ISDEV=true
+EXPO_PUBLIC_LIVEKIT_URL=wss://your-project.livekit.cloud
+EXPO_PUBLIC_BACKEND_URL=https://your-backend.com/.netlify/functions
+EXPO_PUBLIC_MOBILE_API_KEY=your-api-key
+```
+
+## 1. Local Setup (after cloning the repo)
+
+```bash
+# 1. Install dependencies
+npm install
+
+# 2. Configure environment variables in .env file
+
+# 3. Generate native code
+npx expo prebuild
+
+# 4. Start development server
+npm start
+```
+
+## 2. Running on Simulators
+
+### iOS Simulator (requires Mac)
+
+```bash
+npx expo run:ios
+```
+
+**Note**: WebRTC may not work properly in iOS Simulator (no microphone access). The simulator is useful for testing UI, but not for audio functionality.
+
+### Android Emulator
+
+```bash
+# Make sure Android Studio and SDK are installed
+npx expo run:android
+```
+
+**Note**: WebRTC may not work properly in Android Emulator. Test on a physical device for full functionality.
+
+## 3. Running on Physical Devices
+
+### iOS (requires Mac)
+
+1. Connect iPhone via USB
+2. Trust the computer on your phone (if prompted)
+3. Run:
+
+```bash
+npx expo run:ios --device
+```
+
+### Android
+
+1. Enable Developer Mode on your phone:
+   - Settings → About phone → Tap "Build number" 7 times
+2. Enable USB Debugging:
+   - Settings → Developer options → USB Debugging
+3. Connect phone via USB
+4. Verify connection:
+   ```bash
+   adb devices
+   ```
+5. Run:
+
+```bash
+npx expo run:android
+```
+
+**Important**: If the backend runs locally on `localhost`, you must use your computer's IP address in `.env` instead of `localhost` (the phone cannot connect to the computer's `localhost`).
+
+## 4. Preview Build (for downloading to devices)
+
+Preview build creates an installable application (APK for Android, IPA for iOS) for testing on physical devices.
+
+### Setup
+
+1. Install EAS CLI:
+
+```bash
+npm install -g eas-cli
+```
+
+2. Login:
+
+```bash
+eas login
+```
+
+3. Configure project (one-time):
+
+```bash
+eas build:configure
+```
+
+### Preview Build
+
+#### Android (APK)
+
+```bash
+eas build --platform android --profile preview
+```
+
+After completion, you'll receive a link to download the APK. Download it on your phone and install (allow installation from unknown sources).
+
+#### iOS (IPA)
+
+```bash
+eas build --platform ios --profile preview
+```
+
+You'll receive an IPA. Easiest to install via TestFlight (after submitting the build to App Store Connect) or via Ad Hoc distribution.
+
+### Environment Variables for Preview
+
+For preview builds, you can set environment variables in EAS Secrets:
+
+```bash
+eas secret:create --name EXPO_PUBLIC_LIVEKIT_URL --value "wss://your-server.livekit.cloud" --scope project
+eas secret:create --name EXPO_PUBLIC_BACKEND_URL --value "https://your-backend.com" --scope project
+eas secret:create --name EXPO_PUBLIC_MOBILE_API_KEY --value "your-api-key" --scope project
+```
+
+## Important Notes
+
+- ⚠️ **LiveKit requires Development Build** - the app **will NOT work in Expo Go**
+- ⚠️ **WebRTC works best on physical devices** - simulators may have audio issues
+- ⚠️ **Microphone requires permissions** - the app will request them automatically
+- ⚠️ **Backend must be available** - verify that the `/token` endpoint works correctly
+
+## Troubleshooting
+
+### "Unable to resolve module"
+
+```bash
+npm install
+npx expo prebuild
+```
+
+### App doesn't connect to development server
+
+- Check if phone and computer are on the same WiFi network
+- Or use tunnel: `npm start -- --tunnel`
+
+### LiveKit/WebRTC errors
+
+- Make sure you're using a development build (not Expo Go)
+- Check if `npx expo prebuild` completed successfully
+- Check if environment variables are set correctly
+
+### Android - "Network request failed"
+
+If the backend runs locally, use your computer's IP address in `.env` instead of `localhost`:
+
+```bash
+# Find computer IP
+ipconfig getifaddr en0  # macOS
+# Or
+ifconfig | grep "inet " | grep -v 127.0.0.1
+
+# Set in .env
+EXPO_PUBLIC_BACKEND_URL=http://192.168.1.100:8888  # Replace with your IP
+```
+
+## Resources
+
+- [Expo Documentation](https://docs.expo.dev/)
+- [LiveKit React Native Docs](https://docs.livekit.io/client-sdk-react-native/)
+- [EAS Build Documentation](https://docs.expo.dev/build/introduction/)

@@ -75,9 +75,15 @@ export default {
     // Add environment variables to extra config
     // These will be available via Constants.expoConfig?.extra
     extra: {
+      eas: {
+        projectId: "f748cca2-13a5-404f-9a41-4db4b6ff1265",
+      },
       livekitUrl: process.env.EXPO_PUBLIC_LIVEKIT_URL || "",
       backendUrl: process.env.EXPO_PUBLIC_BACKEND_URL || "",
       mobileApiKey: process.env.EXPO_PUBLIC_MOBILE_API_KEY || "",
+      isDev:
+        process.env.EXPO_PUBLIC_ISDEV === "true" ||
+        process.env.EXPO_PUBLIC_ISDEV === "1",
     },
   },
 };

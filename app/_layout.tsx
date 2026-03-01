@@ -10,8 +10,7 @@ import {
   ThemeProvider as NavigationThemeProvider,
 } from "@react-navigation/native";
 
-import { ThemeProvider } from "@/contexts/ThemeContext";
-import { useColorScheme } from "@/hooks/use-color-scheme";
+import { ThemeProvider, useTheme } from "@/contexts/ThemeContext";
 
 import "@/locales/i18n";
 import "react-native-get-random-values";
@@ -48,26 +47,32 @@ export const unstable_settings = {
   anchor: "(tabs)",
 };
 
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
+function RootLayoutContent() {
+  const { actualTheme } = useTheme();
   const { t } = useTranslation();
 
   return (
+    <NavigationThemeProvider
+      value={actualTheme === "dark" ? DarkTheme : DefaultTheme}
+    >
+      <Stack>
+        <Stack.Screen name="(tabs)" options={{ title: t("layout.tabs") }} />
+        <Stack.Screen
+          name="modal"
+          options={{ presentation: "modal", title: "Modal" }}
+        />
+        <Stack.Screen name="guide" options={{ headerTitle: "" }} />
+        <Stack.Screen name="listener" options={{ headerTitle: "" }} />
+      </Stack>
+      <StatusBar style={actualTheme === "dark" ? "light" : "dark"} />
+    </NavigationThemeProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
     <ThemeProvider>
-      <NavigationThemeProvider
-        value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
-      >
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ title: t("layout.tabs") }} />
-          <Stack.Screen
-            name="modal"
-            options={{ presentation: "modal", title: "Modal" }}
-          />
-          <Stack.Screen name="guide" options={{ headerTitle: "" }} />
-          <Stack.Screen name="listener" options={{ headerTitle: "" }} />
-        </Stack>
-        <StatusBar style="auto" />
-      </NavigationThemeProvider>
+      <RootLayoutContent />
     </ThemeProvider>
   );
 }
