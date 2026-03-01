@@ -4,11 +4,12 @@ import { StyleSheet } from "react-native";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 
-import partialReactLogo from "@/assets/images/partial-react-logo.png";
+import logoTransparent from "@/assets/images/logo_transparent.png";
 import ParallaxScrollView from "@/components/parallax-scroll-view";
 import { ThemedButton } from "@/components/themed-button";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
+import { Colors } from "@/constants/theme";
 import { generateRoomId } from "@/utils/uuid";
 
 export default function HomeScreen() {
@@ -29,8 +30,17 @@ export default function HomeScreen() {
 
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-      headerImage={<Image source={partialReactLogo} style={styles.reactLogo} />}
+      headerBackgroundColor={{
+        light: Colors.light.background,
+        dark: Colors.dark.background,
+      }}
+      headerImage={
+        <Image
+          source={logoTransparent}
+          style={styles.logo}
+          contentFit="contain"
+        />
+      }
     >
       <ThemedView style={styles.container}>
         <ThemedText type="title" style={styles.title}>
@@ -69,11 +79,9 @@ const styles = StyleSheet.create({
     gap: 8,
     marginBottom: 8,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
+  logo: {
+    width: "100%",
+    height: "100%",
     position: "absolute",
   },
 });

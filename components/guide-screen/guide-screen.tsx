@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
+
 import { ThemedButton } from "@/components/themed-button";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
@@ -83,6 +85,25 @@ export function GuideScreen({ roomId }: GuideScreenProps) {
       disconnect();
     }
   }, [micGranted, token, resetToken, disconnect]);
+
+  // Prevent screen lock when publishing audio
+  useEffect(() => {
+    if (isPublishing) {
+      activateKeepAwakeAsync().catch(() => {
+        // Ignore errors
+      });
+    } else {
+      deactivateKeepAwake().catch(() => {
+        // Ignore errors
+      });
+    }
+    // Cleanup: deactivate when component unmounts
+    return () => {
+      deactivateKeepAwake().catch(() => {
+        // Ignore errors
+      });
+    };
+  }, [isPublishing]);
 
   const handleToggleSpeak = async () => {
     if (isPublishing) {
