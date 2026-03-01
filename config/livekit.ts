@@ -1,6 +1,15 @@
 import Constants from "expo-constants";
 
 /**
+ * Whether the app is in development mode.
+ * Set via EXPO_PUBLIC_ISDEV=true in .env (or in EAS/env at build time).
+ */
+export const IS_DEV =
+  (Constants.expoConfig?.extra?.isDev ??
+    process.env.EXPO_PUBLIC_ISDEV === "true") ||
+  process.env.EXPO_PUBLIC_ISDEV === "1";
+
+/**
  * LiveKit server URL
  * Set via EXPO_PUBLIC_LIVEKIT_URL environment variable or use default
  */

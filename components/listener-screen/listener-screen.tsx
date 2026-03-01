@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-  TextInput,
-} from "react-native";
+import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 
 import { ThemedButton } from "@/components/themed-button";
+import { ThemedInput } from "@/components/themed-input";
 import { ThemedText } from "@/components/themed-text";
 import { ThemedView } from "@/components/themed-view";
 import { LIVEKIT_SERVER_URL } from "@/config/livekit";
@@ -105,7 +101,7 @@ export function ListenerScreen() {
         {/* Room ID Input */}
         {!connected && (
           <ThemedView style={styles.section}>
-            <TextInput
+            <ThemedInput
               style={styles.input}
               value={roomId}
               onChangeText={(text) => {
@@ -114,7 +110,6 @@ export function ListenerScreen() {
                 setRoomId(filtered);
               }}
               placeholder={t("listener.roomIdPlaceholder")}
-              placeholderTextColor="#999"
               autoCapitalize="characters"
               autoCorrect={false}
               maxLength={8}
@@ -226,7 +221,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "center",
     backgroundColor: "rgba(10, 126, 164, 0.1)",
-    color: "#000",
   },
   statusContainer: {
     flexDirection: "row",
