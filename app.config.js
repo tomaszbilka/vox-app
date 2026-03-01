@@ -4,7 +4,7 @@ export default {
     slug: "vox-app",
     version: "1.0.0",
     orientation: "portrait",
-    icon: "./assets/images/icon.png",
+    icon: "./assets/images/logo_transparent.png",
     scheme: "voxapp",
     userInterfaceStyle: "automatic",
     newArchEnabled: true,
@@ -21,9 +21,9 @@ export default {
     android: {
       adaptiveIcon: {
         backgroundColor: "#E6F4FE",
-        foregroundImage: "./assets/images/android-icon-foreground.png",
+        foregroundImage: "./assets/images/logo_transparent.png",
         backgroundImage: "./assets/images/android-icon-background.png",
-        monochromeImage: "./assets/images/android-icon-monochrome.png",
+        monochromeImage: "./assets/images/logo_transparent.png",
       },
       edgeToEdgeEnabled: true,
       predictiveBackGestureEnabled: false,
